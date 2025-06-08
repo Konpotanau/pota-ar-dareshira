@@ -10,22 +10,13 @@
   </style>
 </head>
 <body>
-  <!-- CDNからthree.jsとMindARの非モジュール版を読み込む -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
-  <!-- three.jsのGLTFLoaderはES module形式なので、こちらは少し工夫が必要 -->
-  <!-- 代わりにCDNのUMD版GLTFLoaderを使う方法を下で解説 -->
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+    import { MindARThree } from 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js';
+    import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
 
-  <script>
-    // three.js のGLTFLoaderはES Moduleなので、直接読み込めないため
-    // mindarの非モジュール版と合わせるならGLTFLoaderのUMD版を使うのがおすすめです。
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const mindarThree = new MINDAR.MindARThree({
+    const start = async () => {
+      const mindarThree = new MindARThree({
         container: document.body,
         imageTargetSrc: './assets/marker.mind',
       });
@@ -33,17 +24,18 @@
       const { renderer, scene, camera } = mindarThree;
       const anchor = mindarThree.addAnchor(0);
 
-      const loader = new THREE.GLTFLoader();
+      const loader = new GLTFLoader();
       loader.load('./assets/model.vrm', (gltf) => {
         anchor.group.add(gltf.scene);
       });
 
-      mindarThree.start().then(() => {
-        renderer.setAnimationLoop(() => {
-          renderer.render(scene, camera);
-        });
+      await mindarThree.start();
+      renderer.setAnimationLoop(() => {
+        renderer.render(scene, camera);
       });
-    });
+    };
+
+    start();
   </script>
 </body>
 </html>
