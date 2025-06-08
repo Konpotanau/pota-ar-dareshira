@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VRM AR Viewer</title>
   <style>
     body { margin: 0; overflow: hidden; }
@@ -10,13 +10,22 @@
   </style>
 </head>
 <body>
-  <script type="module">
-    import { MindARThree } from './js/mindar-image-three.prod.js';
-    import * as THREE from './js/three.module.js';
-    import { GLTFLoader } from './js/GLTFLoader.js';
+  <!-- CDNからthree.jsとMindARの非モジュール版を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
+  <!-- three.jsのGLTFLoaderはES module形式なので、こちらは少し工夫が必要 -->
+  <!-- 代わりにCDNのUMD版GLTFLoaderを使う方法を下で解説 -->
 
-    const start = async () => {
-      const mindarThree = new MindARThree({
+  <script>
+    // three.js のGLTFLoaderはES Moduleなので、直接読み込めないため
+    // mindarの非モジュール版と合わせるならGLTFLoaderのUMD版を使うのがおすすめです。
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mindarThree = new MINDAR.MindARThree({
         container: document.body,
         imageTargetSrc: './assets/marker.mind',
       });
@@ -24,18 +33,17 @@
       const { renderer, scene, camera } = mindarThree;
       const anchor = mindarThree.addAnchor(0);
 
-      const loader = new GLTFLoader();
+      const loader = new THREE.GLTFLoader();
       loader.load('./assets/model.vrm', (gltf) => {
         anchor.group.add(gltf.scene);
       });
 
-      await mindarThree.start();
-      renderer.setAnimationLoop(() => {
-        renderer.render(scene, camera);
+      mindarThree.start().then(() => {
+        renderer.setAnimationLoop(() => {
+          renderer.render(scene, camera);
+        });
       });
-    };
-
-    start();
+    });
   </script>
 </body>
 </html>
