@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VRM AR Viewer</title>
   <style>
     body { margin: 0; overflow: hidden; }
@@ -11,25 +11,31 @@
 </head>
 <body>
   <script type="module">
-    import { MindAR } from 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js';
-    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-    import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+    import { MindARThree } from './js/mindar-image-three.prod.js';
+    import * as THREE from './js/three.module.js';
+    import { GLTFLoader } from './js/GLTFLoader.js';
 
-    const mindar = new MindAR({
-      container: document.body,
-      imageTargetSrc: './assets/marker.mind',
-    });
+    const start = async () => {
+      const mindarThree = new MindARThree({
+        container: document.body,
+        imageTargetSrc: './assets/marker.mind',
+      });
 
-    const { renderer, scene, camera } = mindar;
-    const anchor = mindar.addAnchor(0);
+      const { renderer, scene, camera } = mindarThree;
+      const anchor = mindarThree.addAnchor(0);
 
-    const loader = new GLTFLoader();
-    loader.load('./assets/model.vrm', (gltf) => {
-      anchor.group.add(gltf.scene);
-    });
+      const loader = new GLTFLoader();
+      loader.load('./assets/model.vrm', (gltf) => {
+        anchor.group.add(gltf.scene);
+      });
 
-    await mindar.start();
-    renderer.setAnimationLoop(() => renderer.render(scene, camera));
+      await mindarThree.start();
+      renderer.setAnimationLoop(() => {
+        renderer.render(scene, camera);
+      });
+    };
+
+    start();
   </script>
 </body>
 </html>
