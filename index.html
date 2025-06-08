@@ -10,13 +10,16 @@
   </style>
 </head>
 <body>
-  <script type="module">
-    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-    import { MindARThree } from 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js';
-    import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+  <!-- three.jsのグローバル版 -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <!-- MindARのグローバル版 -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
+  <!-- GLTFLoaderのグローバル版 -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
 
-    const start = async () => {
-      const mindarThree = new MindARThree({
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mindarThree = new MINDAR.MindARThree({
         container: document.body,
         imageTargetSrc: './assets/marker.mind',
       });
@@ -24,18 +27,17 @@
       const { renderer, scene, camera } = mindarThree;
       const anchor = mindarThree.addAnchor(0);
 
-      const loader = new GLTFLoader();
+      const loader = new THREE.GLTFLoader();
       loader.load('./assets/model.vrm', (gltf) => {
         anchor.group.add(gltf.scene);
       });
 
-      await mindarThree.start();
-      renderer.setAnimationLoop(() => {
-        renderer.render(scene, camera);
+      mindarThree.start().then(() => {
+        renderer.setAnimationLoop(() => {
+          renderer.render(scene, camera);
+        });
       });
-    };
-
-    start();
+    });
   </script>
 </body>
 </html>
