@@ -2,19 +2,15 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>MindAR ESモジュール版テスト</title>
+  <title>MindAR ESモジュールテスト</title>
 </head>
 <body>
 
-  <script type="module">
-    import { MindARThree } from 'https://cdn.skypack.dev/mind-ar@1.2.5/dist/mindar-image-three.prod.js';
+<script type="module">
+  import { MindARThree } from 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js';
 
-    if (MindARThree) {
-      console.log("MindAR ESモジュール版ロード成功:", MindARThree);
-    } else {
-      console.error("MindAR ESモジュール版ロード失敗");
-    }
-  </script>
+  console.log("MindAR ESモジュール版ロード成功", MindARThree);
+</script>
 
 </body>
 </html>
