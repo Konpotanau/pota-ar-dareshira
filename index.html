@@ -45,6 +45,7 @@
         return;
       }
 
+      // MindARセットアップ
       const mindarThree = new MindARThree({
         container: document.body,
         imageTargetSrc: './assets/marker.mind',
@@ -54,6 +55,7 @@
       const anchor = mindarThree.addAnchor(0);
       const scanStatus = document.getElementById('scan-status');
 
+      // スキャン状態表示切り替え
       anchor.onTargetFound = () => {
         scanStatus.textContent = "マーカー認識中！";
         scanStatus.style.background = "rgba(0, 128, 0, 0.8)";
@@ -63,6 +65,15 @@
         scanStatus.style.background = "rgba(0, 0, 0, 0.7)";
       };
 
+      // ライトをシーンに追加
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(1, 2, 3);
+      scene.add(directionalLight);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+
+      // GLTFLoaderとVRMLoaderPlugin設定
       const loader = new GLTFLoader();
       loader.register(parser => new VRMLoaderPlugin(parser));
 
@@ -72,22 +83,25 @@
         vrm = gltf.userData.vrm;
         console.log("✅ VRM読み込み成功:", vrm);
 
-        // スケール調整（適宜調整してください）
+        // スケール・位置・回転調整
         vrm.scene.scale.set(1.5, 1.5, 1.5);
         vrm.scene.position.set(0, 0, 0);
+        vrm.scene.rotation.set(0, Math.PI, 0); // Y軸180度回転
 
+        // アンカーグループに追加
         anchor.group.add(vrm.scene);
 
-        // グローバルに保持してアニメーション用に使う
+        // グローバル保持（アニメーション用）
         window.vrm = vrm;
       } catch (e) {
         console.error("❌ VRM読み込み失敗:", e);
       }
 
+      // MindAR開始
       await mindarThree.start();
 
+      // アニメーションループでVRMを更新しつつレンダリング
       const clock = new THREE.Clock();
-
       renderer.setAnimationLoop(() => {
         const delta = clock.getDelta();
         if (window.vrm) {
