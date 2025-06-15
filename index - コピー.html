@@ -16,7 +16,7 @@
     top: 10px;
     right: 10px;
     padding: 6px 12px;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0,0,0,0.7);
     color: white;
     font-weight: bold;
     border-radius: 4px;
@@ -32,7 +32,6 @@
   <!--<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>-->
   <!-- 自前の UMD版 GLTFLoader -->
   <script src="./js/GLTFLoader.umd.js"></script>
-  <script src="./js/three-vrm.js"></script>
 
 
   <script>
@@ -45,26 +44,22 @@
       const { renderer, scene, camera } = mindarThree;
       const anchor = mindarThree.addAnchor(0);
 
+      // スキャン状態表示の要素取得
       const scanStatus = document.getElementById('scan-status');
 
       anchor.onTargetFound = () => {
         scanStatus.textContent = "マーカー認識中！";
-        scanStatus.style.background = "rgba(0, 128, 0, 0.8)";
+        scanStatus.style.background = "rgba(0, 128, 0, 0.8)";  // 緑色背景に変更
       };
 
       anchor.onTargetLost = () => {
         scanStatus.textContent = "スキャン中...";
-        scanStatus.style.background = "rgba(0, 0, 0, 0.7)";
+        scanStatus.style.background = "rgba(0, 0, 0, 0.7)";  // 元の背景に戻す
       };
 
       const loader = new THREE.GLTFLoader();
       loader.load('./assets/model.vrm', (gltf) => {
-        THREE_VRM.VRM.from(gltf).then((vrm) => {
-          anchor.group.add(vrm.scene);
-          console.log("VRM loaded:", vrm);
-        }).catch(e => {
-          console.error("VRM loading error:", e);
-        });
+        anchor.group.add(gltf.scene);
       });
 
       mindarThree.start().then(() => {
