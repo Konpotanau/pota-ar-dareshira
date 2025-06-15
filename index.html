@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <title>MindAR + VRM モジュール版</title>
-  <style>body{margin:0;overflow:hidden;}#scan-status{position:fixed;top:10px;right:10px;padding:6px 12px;background:rgba(0,0,0,0.7);color:#fff;font-weight:bold;border-radius:4px;z-index:1000;}</style>
-</head>
+<head><meta charset="UTF-8" /><title>MindAR + VRM</title></head>
 <body>
   <div id="scan-status">スキャン中...</div>
 
@@ -15,39 +11,34 @@
     import { VRMLoaderPlugin } from 'https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.min.js';
 
     const scanStatus = document.getElementById('scan-status');
-
     const mindarThree = new MindARThree({
       container: document.body,
       imageTargetSrc: './assets/marker.mind',
     });
+
     const { renderer, scene, camera } = mindarThree;
     const anchor = mindarThree.addAnchor(0);
 
     anchor.onTargetFound = () => {
       scanStatus.textContent = "マーカー認識中！";
-      scanStatus.style.background = "rgba(0,128,0,0.8)";
     };
     anchor.onTargetLost = () => {
       scanStatus.textContent = "スキャン中...";
-      scanStatus.style.background = "rgba(0,0,0,0.7)";
     };
 
     const loader = new GLTFLoader();
     loader.register(parser => new VRMLoaderPlugin(parser));
 
-    loader.load('./assets/model.vrm').then((gltf) => {
+    loader.load('./assets/model.vrm').then(gltf => {
       const vrm = gltf.userData.vrm;
       anchor.group.add(vrm.scene);
       console.log("VRM読み込み成功", vrm);
-    }).catch((e) => {
-      console.error("VRM読み込み失敗", e);
-    });
+    }).catch(console.error);
 
-    await mindarThree.start();
-
-    renderer.setAnimationLoop(() => {
-      renderer.render(scene, camera);
-    });
+    (async () => {
+      await mindarThree.start();
+      renderer.setAnimationLoop(() => renderer.render(scene, camera));
+    })();
   </script>
 </body>
 </html>
