@@ -49,21 +49,29 @@
       const mindarThree = new MindARThree({
         container: document.body,
         imageTargetSrc: './assets/marker.mind',
+        uiLoading: false,
+        uiScanning: false,
+        uiError: false,
       });
 
       const { renderer, scene, camera } = mindarThree;
       const anchor = mindarThree.addAnchor(0);
       const scanStatus = document.getElementById('scan-status');
 
-      // スキャン状態表示切り替え＆ログ追加
+      // 最初はアンカーグループ非表示にする
+      anchor.group.visible = false;
+
+      // スキャン状態表示切り替え
       anchor.onTargetFound = () => {
         scanStatus.textContent = "マーカー認識中！";
         scanStatus.style.background = "rgba(0, 128, 0, 0.8)";
+        anchor.group.visible = true;  // アンカー表示ON
         console.log("✅ マーカー認識: アンカー位置", anchor.group.position);
       };
       anchor.onTargetLost = () => {
         scanStatus.textContent = "スキャン中...";
         scanStatus.style.background = "rgba(0, 0, 0, 0.7)";
+        anchor.group.visible = false;  // アンカー非表示
         console.log("⚠️ マーカーロスト");
       };
 
@@ -84,14 +92,11 @@
         const gltf = await loader.loadAsync('./assets/model.vrm');
         vrm = gltf.userData.vrm;
         console.log("✅ VRM読み込み成功:", vrm);
-        console.log("anchor.group:", anchor.group);
-        console.log("vrm.scene:", vrm.scene);
 
         // スケール・位置・回転調整
-        vrm.scene.scale.set(2, 2, 2);
-        vrm.scene.position.set(0, -0.5, 0); // 少し下にずらす
+        vrm.scene.scale.set(3, 3, 3);  // 大きめに調整
+        vrm.scene.position.set(0, 0, 0);  // 基本は0,0,0
         vrm.scene.rotation.set(0, Math.PI, 0); // Y軸180度回転
-        vrm.scene.visible = true;
 
         // アンカーグループに追加
         anchor.group.add(vrm.scene);
