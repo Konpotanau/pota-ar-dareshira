@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VRM AR Viewer</title>
   <style>
     body { margin: 0; overflow: hidden; }
@@ -22,13 +22,17 @@
 <body>
   <div id="scan-status">スキャン中...</div>
 
-  <!-- MindAR v1.2.5 (UMDグローバル版) -->
+  <!-- MindAR UMD グローバル版 -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
 
   <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
+    // 3. GLTFLoaderを読み込む
     import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/loaders/GLTFLoader.js';
+
+    // 4. three-vrm の VRMLoaderPlugin を読み込む
     import { VRMLoaderPlugin } from 'https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.min.js';
+
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
       if (!window.MINDAR) {
@@ -36,15 +40,21 @@
         return;
       }
 
+      // MindARThreeインスタンス作成（4. マーカー画像をセット）
       const mindarThree = new window.MINDAR.IMAGE.MindARThree({
         container: document.body,
         imageTargetSrc: './assets/marker.mind',
       });
 
+      // three.jsの基本オブジェクトを取得
       const { renderer, scene, camera } = mindarThree;
+
+      // マーカー認識時にVRMを表示するアンカーを作成（5. マーカー認識＆レンダリング）
       const anchor = mindarThree.addAnchor(0);
+
       const scanStatus = document.getElementById('scan-status');
 
+      // マーカーを認識した時の表示を切り替え
       anchor.onTargetFound = () => {
         scanStatus.textContent = "マーカー認識中！";
         scanStatus.style.background = "rgba(0, 128, 0, 0.8)";
@@ -54,10 +64,11 @@
         scanStatus.style.background = "rgba(0, 0, 0, 0.7)";
       };
 
-      // VRM対応GLTFLoader
+      // 3. GLTFLoaderを初期化し、VRMLoaderPluginを登録
       const loader = new GLTFLoader();
       loader.register((parser) => new VRMLoaderPlugin(parser));
 
+      // VRMモデルを読み込みアンカーに追加
       try {
         const gltf = await loader.loadAsync('./assets/model.vrm');
         const vrm = gltf.userData.vrm;
@@ -67,8 +78,10 @@
         console.error("❌ VRM読み込み失敗:", e);
       }
 
+      // MindARをスタート
       await mindarThree.start();
 
+      // アニメーションループを開始して毎フレーム描画
       renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
       });
