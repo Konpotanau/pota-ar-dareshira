@@ -10,6 +10,20 @@
   </style>
 </head>
 <body>
+  <!-- スキャン状態表示 -->
+  <div id="scan-status" style="
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 1000;
+  ">
+    スキャン中...
+  </div>
   <!-- three.jsのグローバル版 -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
   <!-- MindARのグローバル（UMD）版 -->
@@ -29,6 +43,19 @@
 
       const { renderer, scene, camera } = mindarThree;
       const anchor = mindarThree.addAnchor(0);
+
+      // スキャン状態表示の要素取得
+      const scanStatus = document.getElementById('scan-status');
+
+      anchor.onTargetFound = () => {
+        scanStatus.textContent = "マーカー認識中！";
+        scanStatus.style.background = "rgba(0, 128, 0, 0.8)";  // 緑色背景に変更
+      };
+
+      anchor.onTargetLost = () => {
+        scanStatus.textContent = "スキャン中...";
+        scanStatus.style.background = "rgba(0, 0, 0, 0.7)";  // 元の背景に戻す
+      };
 
       const loader = new THREE.GLTFLoader();
       loader.load('./assets/model.vrm', (gltf) => {
