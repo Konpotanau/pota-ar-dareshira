@@ -1,15 +1,55 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>MindAR + VRM Sample</title>
+<meta charset="UTF-8" />
+<title>MindAR UMD + VRM</title>
+<style>
+  body { margin: 0; overflow: hidden; }
+</style>
 </head>
 <body>
-<script type="module">
-  import { MindARThree } from 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js';
-  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
+<div id="scan-status">スキャン中...</div>
 
-  console.log("MindAR & Three.jsロード成功", MindARThree, THREE);
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.min.js"></script>
+
+<script>
+  // UMD版はwindow.MINDARとwindow.THREEが使える
+  if(!window.MINDAR) {
+    alert("MindAR読み込み失敗");
+  }
+
+  const mindarThree = new window.MINDAR.IMAGE.MindARThree({
+    container: document.body,
+    imageTargetSrc: './assets/marker.mind',
+  });
+
+  const { renderer, scene, camera } = mindarThree;
+  const anchor = mindarThree.addAnchor(0);
+
+  anchor.onTargetFound = () => {
+    console.log("マーカー認識中");
+  };
+  anchor.onTargetLost = () => {
+    console.log("マーカー見失った");
+  };
+
+  const loader = new window.THREE.GLTFLoader();
+  loader.register((parser) => new window.THREE.VRMLoaderPlugin(parser));
+
+  loader.load('./assets/model.vrm', (gltf) => {
+    const vrm = gltf.userData.vrm;
+    anchor.group.add(vrm.scene);
+    console.log("VRM読み込み成功", vrm);
+  });
+
+  mindarThree.start();
+
+  renderer.setAnimationLoop(() => {
+    renderer.render(scene, camera);
+  });
 </script>
 </body>
 </html>
