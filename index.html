@@ -84,7 +84,7 @@
         console.log("✅ VRM読み込み成功:", vrm);
 
         // スケール・位置・回転調整
-        vrm.scene.scale.set(0.1, 0.1, 0.1);
+        vrm.scene.scale.set(1.5, 1.5, 1.5);
         vrm.scene.position.set(0, 0, 0);
         vrm.scene.rotation.set(0, Math.PI, 0); // Y軸180度回転
 
@@ -97,16 +97,30 @@
         console.error("❌ VRM読み込み失敗:", e);
       }
 
-      // MindAR開始
-      await mindarThree.start();
+      // MindAR開始部分
+      try {
+        await mindarThree.start();
+        console.log("▶️ MindAR開始成功");
+      } catch (e) {
+        console.error("❌ MindAR開始失敗:", e);
+      }
 
-      // アニメーションループでVRMを更新しつつレンダリング
+      // アニメーションループに簡易ログ追加
       const clock = new THREE.Clock();
+      let timeAccumulator = 0;
       renderer.setAnimationLoop(() => {
         const delta = clock.getDelta();
+        timeAccumulator += delta;
+
         if (window.vrm) {
           window.vrm.update(delta);
         }
+
+        if (timeAccumulator > 0.5) { // 0.5秒に一回ログを出す
+          console.log(`⏳ アニメーション更新中 - delta: ${delta.toFixed(3)}s`);
+          timeAccumulator = 0;
+        }
+
         renderer.render(scene, camera);
       });
     });
