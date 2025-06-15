@@ -28,7 +28,9 @@
       "three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.min.js"
     }
   }
+
   </script>
+
 </head>
 <body>
   <div id="scan-status">スキャン中...</div>
@@ -64,35 +66,20 @@
       };
 
       const loader = new GLTFLoader();
-      loader.register(parser => new VRMLoaderPlugin(parser));
+      loader.register((parser) => new VRMLoaderPlugin(parser));
 
-      let vrm = null;
       try {
         const gltf = await loader.loadAsync('./assets/model.vrm');
-        vrm = gltf.userData.vrm;
-        console.log("✅ VRM読み込み成功:", vrm);
-
-        // スケール調整（適宜調整してください）
-        vrm.scene.scale.set(1.5, 1.5, 1.5);
-        vrm.scene.position.set(0, 0, 0);
-
+        const vrm = gltf.userData.vrm;
         anchor.group.add(vrm.scene);
-
-        // グローバルに保持してアニメーション用に使う
-        window.vrm = vrm;
+        console.log("✅ VRM読み込み成功:", vrm);
       } catch (e) {
         console.error("❌ VRM読み込み失敗:", e);
       }
 
       await mindarThree.start();
 
-      const clock = new THREE.Clock();
-
       renderer.setAnimationLoop(() => {
-        const delta = clock.getDelta();
-        if (window.vrm) {
-          window.vrm.update(delta);
-        }
         renderer.render(scene, camera);
       });
     });
