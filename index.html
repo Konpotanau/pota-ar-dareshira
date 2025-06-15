@@ -10,13 +10,19 @@
 <body>
 <div id="scan-status">スキャン中...</div>
 
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
+<!-- MindAR UMD版 -->
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.umd.js"></script>
+
+<!-- Three.js UMD版 -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+
+<!-- GLTFLoader UMD版 -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<!-- three-vrm UMD版 -->
 <script src="https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.min.js"></script>
 
 <script>
-  // UMD版はwindow.MINDARとwindow.THREEが使える
   if(!window.MINDAR) {
     alert("MindAR読み込み失敗");
   }
