@@ -23,24 +23,14 @@
 <body>
   <div id="scan-status">スキャン中...</div>
 
-  <!-- MindARはUMD版でOK -->
+  <!-- ✅ MindAR UMD版（global変数 MINDAR） -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
 
-  <!-- importmapでthree系をまとめて管理 -->
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/",
-        "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.min.js"
-      }
-    }
-  </script>
-
+  <!-- ✅ モジュール読み込み -->
   <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { VRMLoaderPlugin } from '@pixiv/three-vrm';
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/loaders/GLTFLoader.js';
+    import { VRMLoaderPlugin } from 'https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.min.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
       // MindAR初期化
@@ -63,22 +53,20 @@
         scanStatus.style.background = "rgba(0, 0, 0, 0.7)";
       };
 
-      // GLTFLoaderにVRMLoaderPluginを登録
+      // VRM対応GLTFローダーを初期化
       const loader = new GLTFLoader();
       loader.register((parser) => new VRMLoaderPlugin(parser));
 
       try {
         const gltf = await loader.loadAsync('./assets/model.vrm');
         const vrm = gltf.userData.vrm;
-
-        // AnchorにVRMモデルを追加
         anchor.group.add(vrm.scene);
-        console.log('VRM loaded:', vrm);
+        console.log("✅ VRM loaded:", vrm);
       } catch (e) {
-        console.error('VRM loading error:', e);
+        console.error("❌ VRM loading error:", e);
       }
 
-      // AR開始
+      // ARセッション開始
       await mindarThree.start();
 
       renderer.setAnimationLoop(() => {
