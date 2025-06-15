@@ -15,11 +15,14 @@
   <!-- MindARのグローバル（UMD）版 -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
   <!-- GLTFLoaderのグローバル版 -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!--<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>-->
+  <!-- 自前の UMD版 GLTFLoader -->
+  <script src="./js/GLTFLoader.umd.js"></script>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const mindarThree = new MINDAR.MindARThree({
+      const mindarThree = new MINDAR.IMAGE.MindARThree({ 
         container: document.body,
         imageTargetSrc: './assets/marker.mind',
       });
