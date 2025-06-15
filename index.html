@@ -37,6 +37,7 @@
   <script src="./js/three-vrm.js"></script>
 
 
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const mindarThree = new MINDAR.IMAGE.MindARThree({ 
@@ -61,6 +62,7 @@
 
       const loader = new THREE.GLTFLoader();
       loader.load('./assets/model.vrm', (gltf) => {
+        console.log('THREE_VRM.VRM:', THREE_VRM.VRM);
         THREE_VRM.VRM.from(gltf).then((vrm) => {
           anchor.group.add(vrm.scene);
           console.log("VRM loaded:", vrm);
@@ -68,6 +70,7 @@
           console.error("VRM loading error:", e);
         });
       });
+
 
       mindarThree.start().then(() => {
         renderer.setAnimationLoop(() => {
