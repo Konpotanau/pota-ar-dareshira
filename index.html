@@ -22,10 +22,9 @@
 <body>
   <div id="scan-status">スキャン中...</div>
 
-  <!-- 1. MindARはUMD版を普通に読み込む -->
+  <!-- MindAR UMD版 -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
 
-  <!-- 2. three.js、GLTFLoader、three-vrm はモジュールとして別スクリプトで読み込む -->
   <script type="module">
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
     import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/loaders/GLTFLoader.js';
