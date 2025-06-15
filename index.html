@@ -2,15 +2,14 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>MindAR ESモジュールテスト</title>
+  <title>MindAR + VRM Sample</title>
 </head>
 <body>
-
 <script type="module">
   import { MindARThree } from 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js';
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
 
-  console.log("MindAR ESモジュール版ロード成功", MindARThree);
+  console.log("MindAR & Three.jsロード成功", MindARThree, THREE);
 </script>
-
 </body>
 </html>
