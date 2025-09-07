@@ -1,130 +1,16 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VRM AR Viewer 修正版</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { position: absolute; width: 100%; height: 100%; }
-    #scan-status {
-      position: fixed;
-      top: 10px; right: 10px;
-      padding: 6px 12px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      font-weight: bold;
-      border-radius: 4px;
-      z-index: 1000;
-    }
-  </style>
-
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-      "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js",
-      "three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.0.0/lib/three-vrm.module.min.js"
-    }
-  }
-  </script>
+  <meta charset="utf-8">
+  <title>WebAR with VRM</title>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body>
-  <div id="scan-status">スキャン中...</div>
-
-  <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { VRMLoaderPlugin } from 'three-vrm';
-    import { MindARThree } from 'mindar-image-three';
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      if (!window.MINDAR) {
-        console.error("❌ MindAR 読み込み失敗");
-        return;
-      }
-
-      const mindarThree = new MindARThree({
-        container: document.body,
-        imageTargetSrc: './assets/marker.mind',
-        uiLoading: false,
-        uiScanning: false,
-        uiError: false,
-      });
-
-      const { renderer, scene, camera } = mindarThree;
-
-      camera.near = 0.1;
-      camera.far = 1000;
-      camera.updateProjectionMatrix();
-
-      const anchor = mindarThree.addAnchor(0);
-      const scanStatus = document.getElementById('scan-status');
-
-      anchor.group.visible = false;
-
-      anchor.onTargetFound = () => {
-        scanStatus.textContent = "マーカー認識中！";
-        scanStatus.style.background = "rgba(0, 128, 0, 0.8)";
-        anchor.group.visible = true;
-        console.log("✅ マーカー認識: アンカー位置", anchor.group.position);
-      };
-      anchor.onTargetLost = () => {
-        scanStatus.textContent = "スキャン中...";
-        scanStatus.style.background = "rgba(0, 0, 0, 0.7)";
-        anchor.group.visible = false;
-        console.log("⚠️ マーカーロスト");
-      };
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // 強め
-      directionalLight.position.set(1, 2, 3);
-      scene.add(directionalLight);
-
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.0); // 強め
-      scene.add(ambientLight);
-
-      const loader = new GLTFLoader();
-      loader.register(parser => new VRMLoaderPlugin(parser));
-
-      let vrm = null;
-      try {
-        const gltf = await loader.loadAsync('./assets/model.vrm');
-        vrm = gltf.userData.vrm;
-        console.log("✅ VRM読み込み成功:", vrm);
-
-        vrm.scene.scale.set(1, 1, 1);
-        vrm.scene.position.set(0, 0, 0.5); // カメラ寄りに少し調整
-        vrm.scene.rotation.set(0, 0, 0);
-
-        // マテリアルを強制的に不透明に
-        vrm.scene.traverse((obj) => {
-          if (obj.material) {
-            obj.material.transparent = false;
-            obj.material.opacity = 1.0;
-            obj.material.depthWrite = true;
-            obj.material.needsUpdate = true;
-          }
-        });
-
-        anchor.group.add(vrm.scene);
-
-        window.vrm = vrm;
-      } catch (e) {
-        console.error("❌ VRM読み込み失敗:", e);
-      }
-
-      await mindarThree.start();
-
-      const clock = new THREE.Clock();
-      renderer.setAnimationLoop(() => {
-        const delta = clock.getDelta();
-        if (window.vrm) {
-          window.vrm.update(delta);
-        }
-        renderer.render(scene, camera);
-      });
-    });
-  </script>
+  <model-viewer 
+      src="kushinyanv17_Aepron_converted.glb"  alt="My VRM Model"
+      ar  ar-modes="webxr scene-viewer quick-look"
+      camera-controls
+      style="width: 100%; height: 500px;">
+  </model-viewer>
 </body>
 </html>
