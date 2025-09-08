@@ -6,11 +6,24 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body>
-  <model-viewer 
-      src="kushinyanv17_Aepron_converted.glb"  alt="My VRM Model"
-      ar  ar-modes="webxr scene-viewer quick-look"
+
+  <model-viewer id="my-model"
+      src="kushinyanv17_Aepron_converted.glb" alt="My VRM Model"
+      ar ar-modes="webxr scene-viewer quick-look"
       camera-controls
       style="width: 100%; height: 500px;">
   </model-viewer>
+
+  <script>
+    // id="my-model" の model-viewer要素を取得
+    const modelViewer = document.querySelector('#my-model');
+
+    // model-viewerがクリックされたら...
+    modelViewer.addEventListener('click', () => {
+      // ARモードを起動する
+      modelViewer.activateAR();
+    });
+  </script>
+
 </body>
 </html>
