@@ -18,6 +18,12 @@
     // id="my-model" の model-viewer要素を取得
     const modelViewer = document.querySelector('#my-model');
 
+    // モデルの読み込みが完了したら...
+    modelViewer.addEventListener('load', () => {
+      // 利用可能なアニメーション名をコンソールに表示
+      console.log('Available animations:', modelViewer.availableAnimations);
+    });
+
     // model-viewerがクリックされたら...
     modelViewer.addEventListener('click', () => {
       // ARモードを起動する
